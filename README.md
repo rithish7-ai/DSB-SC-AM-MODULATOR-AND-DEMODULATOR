@@ -63,8 +63,90 @@ Note: Keep all the switch faults in off position
 
 ## PROGRAM:
 
+clc;
+
+clear;
+
+close();
+
+am = 7.5;  
+
+ac = 15; 
+
+fm =217.9; 
+
+fc = 2179; 
+
+fs = 21790;       
+
+
+t = 0:1/fs:2/fm;
+
+N = length(t);
+
+m = am * cos(2 * %pi * fm * t);
+
+c = ac * cos(2 * %pi * fc * t);
+
+s = (ac + m) .* cos(2 * %pi * fc * t);
+
+v = s .* cos(2 * %pi * fc * t); 
+
+cutoff = 2 * fm;      
+
+k = 0:N-1;
+
+freq = k * (fs / N);
+
+freq(freq > fs/2) = freq(freq > fs/2) - fs; 
+
+V = fft(v);          
+
+mask = abs(freq) <= cutoff; 
+
+Vf = V .* mask;           
+
+vlp = real(ifft(Vf));            
+
+demod = 2 * (vlp - ac/2);
+
+demod = demod - mean(demod) + mean(m); 
+
+scf(0);
+
+subplot(4,1,1);
+
+plot(t, m);
+
+xtitle("Message m(t)", "Time (s)", "Amplitude");
+
+subplot(4,1,2);
+
+plot(t, c);
+
+xtitle("Carrier c(t)", "Time (s)", "Amplitude");
+
+subplot(4,1,3);
+
+plot(t, s);
+
+xtitle("AM s(t)", "Time (s)", "Amplitude");
+
+subplot(4,1,4);
+
+plot(t, demod);
+
+xtitle("Demodulated (Coherent) signal", "Time (s)", "Amplitude");
+
+
 ## TABULATION:
+<img width="325" height="360" alt="image" src="https://github.com/user-attachments/assets/a6fb8ec1-6782-4697-b0d1-2efab22920bb" />
+
 
 ## OUTPUT:
+<img width="676" height="576" alt="image" src="https://github.com/user-attachments/assets/d9fd4db4-f781-46af-9847-25b6a8301616" />
+
+
 
 ## RESULT:
+Thus the DSB-SC-AM Modulation and Demodulation is generated.
